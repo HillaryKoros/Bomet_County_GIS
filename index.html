@@ -3,18 +3,130 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Display Multipolygon GeoJSON in Leaflet</title>
+  <title>Koimeret Registration Section</title>
   <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
   <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0; /* Reset default margin */
+      padding: 0; /* Reset default padding */
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh; /* Ensure full viewport height */
+    }
+
     #map {
-        width: auto;
-      height: 400px;
+      flex: 1; /* Fill remaining vertical space */
+    }
+
+    nav {
+      background-color: #333;
+      color: white;
+      padding: 10px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    nav a {
+      color: white;
+      margin: 0 20px;
+      text-decoration: none;
+      cursor: pointer;
+    }
+
+    nav a:hover {
+      text-decoration: underline;
+    }
+
+    #content {
+      padding: 20px;
+    }
+
+    .content-section {
+      display: none; /* Initially hide all content sections */
+    }
+
+    footer {
+      background-color: #333;
+      color: white;
+      text-align: center;
+      padding: 10px;
+    }
+
+    /* Style for the dropdown */
+    .dropdown-content {
+      display: none;
+      position: absolute;
+      background-color: #f9f9f9;
+      min-width: 160px;
+      box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+      padding: 12px 16px;
+      z-index: 1;
+    }
+
+    .dropdown:hover .dropdown-content {
+      display: block;
     }
   </style>
 </head>
 <body>
+  <nav>
+    <div class="dropdown">
+      <a href="#" class="dropbtn">Select Section</a>
+      <div class="dropdown-content">
+        <a href="#" onclick="showContent('about')">About Koimeret</a>
+        <a href="#" onclick="showContent('parcels')">Parcels Information</a>
+      </div>
+    </div>
+    <a href="#" onclick="showContent('adjacent')">Adjacent Sections</a>
+    <a href="#" onclick="showContent('contact')">Contact</a>
+  </nav>
+
+  <div id="content">
+    <div id="aboutContent" class="content-section">
+      <h1>Welcome to the Koimeret Registration Section</h1>
+      <p>
+        Koimeret Registration Section is situated within Kong'Asis Ward in Chepalungu, Bomet County. Here, you can access essential information regarding Land Parcels, including unique identification (parcel_id), area, and ownership details.
+      </p>
+    </div>
+    <div id="parcelsContent" class="content-section">
+      <p>
+        Parcels Information: Land Parcels, including unique identification (parcel_id), area, and ownership details.
+      </p>
+    </div>
+    <div id="adjacentContent" class="content-section">
+      <p>
+        Additionally, information for other adjacent registration sections, such as Makimeny, will also be made available for access soon.
+      </p>
+    </div>
+  </div>
+
   <div id="map"></div>
+
+  <footer>
+    The data was georeferenced and digitized from registry index maps accessed from the Department of Land, Housing, and Urban Planning, Bomet County.
+  </footer>
+
   <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
   <script src="script.js"></script>
+
+  <script>
+    // Display the content for 'About Koimeret' initially
+    document.getElementById('aboutContent').style.display = 'block';
+
+    function showContent(contentId) {
+      // Hide all content sections
+      document.querySelectorAll('.content-section').forEach(section => {
+        section.style.display = 'none';
+      });
+
+      // Show the selected content
+      var selectedContent = document.getElementById(contentId + 'Content');
+      if (selectedContent) {
+        selectedContent.style.display = 'block';
+      }
+    }
+  </script>
 </body>
 </html>
