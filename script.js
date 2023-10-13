@@ -12,8 +12,18 @@ fetch(geoJsonUrl)
     L.geoJSON(geoJsonData, {
       style: function (feature) {
         var area = feature.properties.area;  // Get the area from the properties
-        // Assign colors based on the area value
-        var fillColor = area > 1 ? 'green' : 'yellow';
+        // Assign colors based on a gradient
+        var fillColor = area > 10? 'green' : 'yellow';
+      
+        // Modify fillColor based on the area value for a gradient effect
+        if (area > 10) {
+          fillColor = 'green';
+        } else if (area > 5) {
+          fillColor = 'yellow';
+        } else {
+          fillColor = 'red';
+        }
+      
         return {
           fillColor: fillColor,
           fillOpacity: 0.5,
@@ -21,6 +31,7 @@ fetch(geoJsonUrl)
           weight: 2
         };
       },
+      
       onEachFeature: function (feature, layer) {
         // Create a popup with all properties
         var popupContent = '<strong>Properties:</strong><br>' +
