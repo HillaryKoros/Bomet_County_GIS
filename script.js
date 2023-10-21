@@ -1,43 +1,97 @@
-var map = L.map('map').setView([-0.835055, 35.229350], 12); // Initial view at lat 0, lon 0 with zoom level 2
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+document.addEventListener('DOMContentLoaded', function () {
+  var map = L.map('map').setView([-0.835055, 35.229350], 12);
+
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
     attribution: '&copy; OpenStreetMap contributors'
-}).addTo(map);
+  }).addTo(map);
 
-// Load GeoJSON data
-var geoJsonUrl = 'data/Koimeret_Registration_Parcels.geojson';
+  var geoJsonLayer;
+  var parcelDataDisplay = document.getElementById('parcelData');
 
-fetch(geoJsonUrl)
-  .then(response => response.json())
-  .then(geoJsonData => {
-    L.geoJSON(geoJsonData, {
-      style: function (feature) {
-        var area = feature.properties.area;  // Get the area from the properties
-        // Assign colors based on a gradient
-        var fillColor = area > 10? 'green' : 'yellow';
-      
-        // Modify fillColor based on the area value for a gradient effect
-        if (area > 10) {
-          fillColor = 'green';
-        } else if (area > 5) {
-          fillColor = 'yellow';
-        } else {
-          fillColor = 'red';
+  // Load GeoJSON data from the specified URL
+  fetch('data/Koimeret_Registration_Parcels.geojson')
+    .then(response => response.json())
+    .then(data => {
+      geoJsonLayer = L.geoJSON(data, {
+        style: function (feature) {
+          return {
+            fillColor: 'transparent',
+            fillOpacity: 0,
+            color: 'black',
+            weight: 2
+          };
+        },
+        onEachFeature: function (feature, layer) {
+          var popupContent = '<strong>Parcel ID:</strong> ' + feature.properties.parcel_id;
+          layer.bindPopup(popupContent);
         }
-      
-        return {
-          fillColor: fillColor,
-          fillOpacity: 0.5,
-          color: 'blue',
-          weight: 2
-        };
-      },
-      
-      onEachFeature: function (feature, layer) {
-        // Create a popup with all properties
-        var popupContent = '<strong>Properties:</strong><br>' +
-          JSON.stringify(feature.properties, null, 2);
-        layer.bindPopup(popupContent);
+      }).addTo(map);
+    })
+    .catch(error => console.error('Error fetching GeoJSON:', error));
+
+  // Add a click event handler to the query button
+  document.getElementById('queryButton').addEventListener('click', function () {
+    var parcelId = document.getElementById('parcelQuery').value.trim();
+    resetParcelStyle(geoJsonLayer);
+    parcelDataDisplay.innerHTML = '';
+
+    var foundParcels = findParcelsByQuery(geoJsonLayer, parcelId);
+
+    if (foundParcels.length > 0) {
+      map.fitBounds(L.featureGroup(foundParcels).getBounds(), { padding: [50, 50] });
+      highlightParcels(foundParcels);
+      displayParcelData(foundParcels);
+    } else {
+      parcelDataDisplay.innerHTML = 'Parcels not found';
+    }
+  });
+
+  function findParcelsByQuery(geoJsonLayer, parcelId) {
+    var foundParcels = [];
+
+    geoJsonLayer.eachLayer(function (layer) {
+      const parcelIDFromGeoJSON = layer.feature.properties.parcel_id;
+
+      if (parcelIDFromGeoJSON.toString() === parcelId.toString()) {
+        foundParcels.push(layer);
       }
-    }).addTo(map);
-  })
-  .catch(error => console.error('Error fetching GeoJSON:', error));
+    });
+
+    return foundParcels;
+  }
+
+  function highlightParcels(layers) {
+    layers.forEach(function (layer) {
+      layer.setStyle({
+        fillColor: 'red',
+        fillOpacity: 0.6,
+        color: 'black',
+        weight: 7
+      });
+    });
+  }
+
+  function resetParcelStyle(geoJsonLayer) {
+    geoJsonLayer.eachLayer(function (layer) {
+      layer.setStyle({
+        fillColor: 'transparent',
+        fillOpacity: 0,
+        color: 'black',
+        weight: 2
+      });
+    });
+  }
+
+  function displayParcelData(parcels) {
+    var data = parcels.map(function (parcel) {
+      var featureProperties = parcel.feature.properties;
+      var propertyStrings = Object.keys(featureProperties).map(function (key) {
+        return '<strong>' + key + ':</strong> ' + featureProperties[key];
+      });
+      return propertyStrings.join('<br>');
+    });
+  
+    parcelDataDisplay.innerHTML = data.join('<br>');
+  }
+  
+});

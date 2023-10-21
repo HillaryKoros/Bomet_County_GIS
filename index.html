@@ -52,17 +52,20 @@
 </head>
 <body>
   <nav>
-    <a href="#">Home</a>
-    <a href="#">About</a>
-    <a href="#">Contact</a>
+    <div class="container">
+      <div class="card">
+        <div class="card-body">
+          <h5 class="card-title">Parcel Information</h5>
+          <p class="card-text">Enter the Parcel ID below to query information about it.</p>
+          <input type="text" id="parcelQuery" class="form-control mb-3" placeholder="Enter Parcel ID">
+          <button id="queryButton" class="btn btn-primary">Query</button>
+          <div id="parcelData"></div>
+        </div>
+      </div>
+    </div>
   </nav>
 
-  <div id="content">
-    <h1>Welcome to the Koimeret Registration Section</h1>
-    <p>
-      Koimeret is a registration section located in Kong'Asis Ward in Chepalungu, Bomet County. Here, you can access vital information about parcel registration, including details such as area and owner information.
-    </p>
-  </div>
+
 
   <div id="map"></div>
 
