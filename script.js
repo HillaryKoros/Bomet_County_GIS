@@ -1,9 +1,13 @@
 document.addEventListener('DOMContentLoaded', function () {
   var map = L.map('map').setView([-0.835055, 35.229350], 12);
 
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors'
-  }).addTo(map);
+  // Add a Mapbox Satellite tile layer
+L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token={accessToken}', {
+  maxZoom: 18,
+  attribution: 'Map data &copy; <a href="https://www.mapbox.com/">Mapbox</a>',
+  id: 'mapbox/satellite-streets-v11', // You can change this to another Mapbox style
+  accessToken: 'sk.eyJ1Ijoia29yb3MiLCJhIjoiY2xuem5kaW81MTY1eTJrb2FzajFpYTlnZCJ9.STN0NtnO8xd78loY8FSjgQ'
+}).addTo(map);
 
   var geoJsonLayer;
   var parcelDataDisplay = document.getElementById('parcelData');
