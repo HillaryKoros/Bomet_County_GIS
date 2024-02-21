@@ -83,15 +83,35 @@ document.addEventListener('DOMContentLoaded', function () {
   }
 
   function displayParcelData(parcels) {
-    var data = parcels.map(function (parcel) {
-      var featureProperties = parcel.feature.properties;
-      var propertyStrings = Object.keys(featureProperties).map(function (key) {
-        return '<strong>' + key + ':</strong> ' + featureProperties[key];
-      });
-      return propertyStrings.join('<br>');
+    var parcelDataDisplay = document.getElementById('parcelData');
+    var parcelDataTable = document.getElementById('parcelDataTable');
+
+    // Clear existing table contents (if any)
+    parcelDataTable.innerHTML = '';
+
+    // Create table header row
+    var tableHeader = document.createElement('tr');
+    for (const propertyName in parcels[0].feature.properties) {
+      const tableHeaderCell = document.createElement('th');
+      tableHeaderCell.textContent = propertyName;
+      tableHeader.appendChild(tableHeaderCell);
+    }
+    parcelDataTable.appendChild(tableHeader);
+
+    // Add data rows
+    parcels.forEach(function (parcel) {
+      var tableRow = document.createElement('tr');
+
+      for (const propertyName in parcel.feature.properties) {
+        const tableDataCell = document.createElement('td');
+        tableDataCell.textContent = parcel.feature.properties[propertyName];
+        tableRow.appendChild(tableDataCell);
+      }
+
+      parcelDataTable.appendChild(tableRow);
     });
-  
-    parcelDataDisplay.innerHTML = data.join('<br>');
+
+    parcelDataDisplay.innerHTML = ''; // No longer needed 
   }
   
 });
